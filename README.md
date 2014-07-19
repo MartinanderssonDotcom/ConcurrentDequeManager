@@ -2,7 +2,7 @@
 
 A concurrent and highly performant Java manager composed of many `ConcurrentLinkedDeque`, each deque mapped by a key. All deques are completely transparent to the client.
 
-Next stop, read:   
+Next stop, read JavaDoc of:   
 [./src/main/java/martinandersson/com/lib/concurrent/ConcurrentDequeManager.java](https://github.com/MartinanderssonDotcom/ConcurrentDequeManager/blob/master/src/main/java/martinandersson/com/lib/concurrent/ConcurrentDequeManager.java)
 
 ### Features
