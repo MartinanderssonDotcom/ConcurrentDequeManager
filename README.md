@@ -11,9 +11,9 @@ Next stop, read JavaDoc of:
    `long initialPosition = manager.addLast("BID Ipads", 10_000);`  
    `Optional<Integer> matched = manager.removeFirstIf("BID Ipads", Predicate.isEqual(10_000));`
 
-* Amount of deques grow and shrink on demand
+* Amount of deques grow and shrink on demand.
 * Elements may optionally receive position change notifications if they implement `ConcurrentDequeManager.PositionAware`.
-* Lock-free
+* Lock-free.
 * Size of a deque is tracked separately with a [`LongAdder`](http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/LongAdder.html), providing an almost constant cost of size querying. 
 
 ### Users
