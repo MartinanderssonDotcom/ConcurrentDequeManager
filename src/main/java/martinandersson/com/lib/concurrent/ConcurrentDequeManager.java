@@ -953,7 +953,7 @@ public class ConcurrentDequeManager<K, E>
         
         /**
          * Flag to mark that a deque has undergone a structural modification
-         * such that the deque's elements could need of a new position changed
+         * such that the deque's elements could need a new position changed
          * report.
          */
         volatile boolean needPositionReports = false;
