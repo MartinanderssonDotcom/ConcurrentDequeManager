@@ -13,7 +13,7 @@ Next stop, read JavaDoc of:
 * Amount of deques grow and shrink on demand.
 * Elements may optionally receive position change notifications if they implement `ConcurrentDequeManager.PositionAware`.
 * Lock-free.
-* Size of a deque is tracked separately with a [`LongAdder`](http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/LongAdder.html), providing an almost constant cost of size querying. 
+* Querying the size of a deque is almost a constant-time operation (internally tracked with a [`LongAdder`](http://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/LongAdder.html)).
 
 ### Users
 
