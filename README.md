@@ -10,7 +10,6 @@ Next stop, read JavaDoc of:
 * Awesome API. For example:  
    `long initialPosition = manager.addLast("BID Ipads", 10_000);`  
    `Optional<Integer> matched = manager.removeFirstIf("BID Ipads", Predicate.isEqual(10_000));`
-
 * Amount of deques grow and shrink on demand.
 * Elements may optionally receive position change notifications if they implement `ConcurrentDequeManager.PositionAware`.
 * Lock-free.
