@@ -1,6 +1,9 @@
 ### ConcurrentDequeManager
 
-A concurrent and highly performant Java manager composed of many `ConcurrentLinkedDeque`s, each deque mapped by a key. All deques are completely transparent to the client.
+A concurrent and highly performant Java manager composed of many `ConcurrentLinkedDeque`, each deque mapped by a key. All deques are completely transparent to the client.
+
+Next stop, read:   
+[./src/main/java/martinandersson/com/lib/concurrent/ConcurrentDequeManager.java](https://github.com/MartinanderssonDotcom/ConcurrentDequeManager/blob/master/src/main/java/martinandersson/com/lib/concurrent/ConcurrentDequeManager.java)
 
 ### Features
 
@@ -15,5 +18,3 @@ A concurrent and highly performant Java manager composed of many `ConcurrentLink
 ### Users
 
 * [martinandersson.com/livechat/](http://www.martinandersson.com/livechat/ "Author's homepage"): Used as a web user queue system when I am too busy or not online.
-
-### Read more
