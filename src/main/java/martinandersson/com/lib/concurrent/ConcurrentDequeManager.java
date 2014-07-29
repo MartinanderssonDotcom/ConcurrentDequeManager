@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -771,7 +772,13 @@ public class ConcurrentDequeManager<K, E>
     private void tryRunAsync(Runnable job)
     {
         if (workers != null) {
-            workers.execute(job);
+            try {
+                workers.execute(job);
+            }
+            catch (RejectedExecutionException e) {
+                LOGGER.warning(() -> "Tried running job asynchronously but got RejectedExecutionException. Running job in calling thread instead.");
+                job.run();
+            }
         }
         else {
             job.run();
@@ -780,16 +787,29 @@ public class ConcurrentDequeManager<K, E>
     
     private <T> Future<T> tryRunAsync(Callable<T> job)
     {
-        if (workers != null) {
-            return workers.submit(job);
+        if (workers != null)
+        {
+            try {
+                return workers.submit(job);
+            }
+            catch (RejectedExecutionException e)
+            {
+                LOGGER.warning(() -> "Tried running job asynchronously but got RejectedExecutionException. Running job in calling thread instead.");
+                try {
+                    T result = job.call();
+                    return CompletedFuture(result, Optional.empty());
+                } catch (Exception e1) {
+                    return CompletedFuture(null, Optional.of(e1));
+                }
+            }
         }
         else
         {
             try {
                 T result = job.call();
                 return CompletedFuture(result, Optional.empty());
-            } catch (Exception e) {
-                return CompletedFuture(null, Optional.of(e));
+            } catch (Exception e2) {
+                return CompletedFuture(null, Optional.of(e2));
             }           
         }
     }
@@ -820,7 +840,7 @@ public class ConcurrentDequeManager<K, E>
         if (workers == null)
             return;
         
-        administrator.execute(() ->
+        Runnable adminJob = () ->
         {
             if (isReporting.tryLock())
             {
@@ -852,7 +872,15 @@ public class ConcurrentDequeManager<K, E>
             }
             else
                 reportWorkScheduled = true;
-        });
+        };
+        
+        try {
+            administrator.execute(adminJob);
+        }
+        catch (RejectedExecutionException e) {
+            LOGGER.warning(() -> "Tried to report element positions using the administrator thread but got RejectedExecutionException. Running job in calling thread instead.");
+            adminJob.run();
+        }
     }
     
     /**
