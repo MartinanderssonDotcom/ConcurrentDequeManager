@@ -15,39 +15,49 @@ import java.util.stream.LongStream;
  */
 public class ElementActor implements ConcurrentDequeManager.PositionAware
 {
-    private final static ThreadLocal<AtomicInteger> counter = ThreadLocal.withInitial(AtomicInteger::new);
+    private final static ThreadLocal<AtomicInteger> SEQ
+            = ThreadLocal.withInitial(AtomicInteger::new);
     
     private final AtomicBoolean isInCallback = new AtomicBoolean();
     
     private final List<Long> positions = new LinkedList<>();
     
-    private final String value;
+    private final String val;
+    
     
     public ElementActor() {
-        value = String.valueOf(Thread.currentThread().getId()) + "-" + counter.get().incrementAndGet();
+        val = String.valueOf(Thread.currentThread().getId()) + "-" + SEQ.get().incrementAndGet();
     }
+    
     
     @Override
-    public void setPosition(long position)
-    {
-        if (!isInCallback.compareAndSet(false, true))
+    public void newPosition(long position) {
+        if (!isInCallback.compareAndSet(false, true)) {
             throw new ConcurrentModificationException();
+        }
         
-        positions.add(position);
-        
-        if (!isInCallback.compareAndSet(true, false))
-            throw new ConcurrentModificationException();
+        try {
+            positions.add(position);
+        }
+        finally {
+            isInCallback.set(false);
+        }
     }
     
-    public LongStream getPositions() {
+    public LongStream positions() {
         return positions.stream().mapToLong(l -> l);
     }
-
+    
+    public long countReports() {
+        return positions().count();
+    }
+    
+    
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return val.hashCode();
     }
-
+    
     @Override
     public boolean equals(Object obj)
     {
@@ -60,11 +70,11 @@ public class ElementActor implements ConcurrentDequeManager.PositionAware
         if (ElementActor.class != obj.getClass())
             return false;
         
-        return this.value.equals(((ElementActor) obj).value);
+        return this.val.equals(((ElementActor) obj).val);
     }
-
+    
     @Override
     public String toString() {
-        return ElementActor.class.getSimpleName() + "[ value=" + value + " ]";
+        return ElementActor.class.getSimpleName() + "[ val=" + val + " ]";
     }
 }
